@@ -10,6 +10,8 @@
     "type": "project",
     "require": {
         "php": "^8.1",
+        "doctrine/dbal": "^3.6",
+        "doublethreedigital/runway": "^5.0",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^10.8",
         "laravel/sanctum": "^3.2",
