@@ -6,10 +6,59 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{{ title ?? site:name }}</title>
         {{ vite src="resources/js/site.js|resources/css/site.css" }}
+
+
+
+		<style>
+			.section {
+			  margin-bottom: 20px;
+			}
+			.row {
+			  margin-bottom: 10px;
+			}
+			.seat {
+			  width: 30px;
+			  height: 30px;
+			  border: 1px solid black;
+			  display: inline-block;
+			  margin: 2px;
+			  text-align: center;
+			}
+			.booked {
+			  background-color: red;
+			  cursor: not-allowed;
+			}
+			.available {
+			  background-color: green;
+			  cursor: pointer;
+			}
+			.reserved {
+			  background-color: yellow;
+			  cursor: not-allowed;
+			}
+			#shoppingCart {
+			  margin-top: 20px;
+			}
+		  </style>
+
+
     </head>
     <body class="bg-gray-100 font-sans leading-normal text-gray-800">
         <div class="mx-auto px-2 lg:min-h-screen flex flex-col items-center justify-center">
             {{ template_content }}
+
+			<h1>Theater Seating Plan</h1>
+			<div id="seatingPlan"></div>
+			<div id="shoppingCart">
+			  <h2>Shopping Cart</h2>
+			  <ul id="reservedSeats"></ul>
+			  <button id="checkoutBtn" disabled>Checkout</button>
+			</div>
+
+
         </div>
     </body>
+
+
+
 </html>

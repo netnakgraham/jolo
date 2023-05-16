@@ -1,0 +1,46 @@
+{
+	"sections": [
+	  {
+		"name": "Section A",
+		"rows": [
+		  {
+			"number": 1,
+			"seats": [
+			  {"number": "A1", "status": "available"},
+			  {"number": "A2", "status": "booked"},
+			  {"number": "A3", "status": "booked"},
+			  {"number": "A4", "status": "booked"}
+			 
+			]
+		  },
+		  {
+			"number": 2,
+			"seats": [
+			  {"number": "A5", "status": "available"},
+			  {"number": "A6", "status": "booked"}
+			 
+			]
+		  }
+		  
+		]
+	  },
+	  {
+		"name": "Section B",
+		"rows": [
+		  {
+			"number": 1,
+			"seats": [
+			  {"number": "B1", "status": "available"},
+			  {"number": "B2", "status": "available"}
+			 
+			]
+		  }
+		  
+		]
+	  }
+	 
+	 
+	],
+	"breaks": [2, 5]
+  }
+  

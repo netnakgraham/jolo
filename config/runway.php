@@ -44,6 +44,16 @@ return [
 									'type' => 'text',
 									'validate' => 'required',
 								],
+
+								[
+									'handle' => 'venue',
+									'field' => [
+										'display'=> 'Venues',
+										'type' => 'has_many',
+										'table_mode' => true,
+									],
+								],
+
 							],
 						],
 					],

@@ -1,0 +1,76 @@
+title: Venue_Master
+tabs:
+  main:
+    display: Main
+    sections:
+      -
+        fields:
+          -
+            handle: title
+            field:
+              type: text
+              required: true
+              validate:
+                - required
+          -
+            handle: name
+            field:
+              input_type: text
+              antlers: false
+              type: text
+              display: Name
+              icon: text
+              listable: hidden
+              instructions_position: above
+              visibility: visible
+              hide_display: false
+          -
+            handle: seating_plan
+            field:
+              fields:
+                -
+                  handle: rows
+                  field:
+                    mode: table
+                    reorderable: true
+                    fullscreen: true
+                    type: grid
+                    display: Rows
+                    icon: grid
+                    listable: hidden
+                    instructions_position: above
+                    visibility: visible
+                    hide_display: false
+                    fields:
+                      -
+                        handle: seat
+                        field:
+                          input_type: text
+                          antlers: false
+                          type: text
+                          display: Seat
+                          icon: text
+                          listable: hidden
+                          instructions_position: above
+                          visibility: visible
+                          hide_display: false
+              mode: table
+              reorderable: true
+              fullscreen: true
+              type: grid
+              display: 'Seating Plan'
+              icon: grid
+              listable: hidden
+              instructions_position: above
+              visibility: visible
+              hide_display: false
+  sidebar:
+    display: Sidebar
+    sections:
+      -
+        fields:
+          -
+            handle: slug
+            field:
+              type: slug
+              localizable: true
