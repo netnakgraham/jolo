@@ -1,7 +1,7 @@
 {
 	"sections": [
 	  {
-		"name": "Section A",
+		"name": "Section Front",
 		"rows": [
 		  {
 			"number": 1,
@@ -9,23 +9,28 @@
 			  {"number": "A1", "status": "available"},
 			  {"number": "A2", "status": "booked"},
 			  {"number": "A3", "status": "booked"},
-			  {"number": "A4", "status": "booked"}
+			  {"number": "A4", "status": "booked"},
+			  {"number": "A5", "status": "available"},
+			  {"number": "A6", "status": "booked"},
+			  {"number": "A7", "status": "booked"},
+			  {"number": "A8", "status": "booked"}
 			 
 			]
 		  },
 		  {
 			"number": 2,
 			"seats": [
-			  {"number": "A5", "status": "available"},
-			  {"number": "A6", "status": "booked"}
+			  {"number": "B1", "status": "available"},
+			  {"number": "B2", "status": "booked"}
 			 
 			]
 		  }
 		  
-		]
+		],
+		"aisleBreaks": ["A2","A4"] 
 	  },
 	  {
-		"name": "Section B",
+		"name": "Section Rear",
 		"rows": [
 		  {
 			"number": 1,
@@ -36,11 +41,12 @@
 			]
 		  }
 		  
-		]
+		],
+		"aisleBreaks": [4, 9] 
 	  }
+	  
 	 
-	 
-	],
-	"breaks": [2, 5]
+	]
+
   }
   
