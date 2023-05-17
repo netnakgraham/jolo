@@ -112,155 +112,155 @@ var seatingPlanx = {
  
 const seatingPlan = [];
 
-interact('.section')
-  .draggable({
-	onmove: dragMoveListener
-  })
-  .resizable({
-	edges: { left: true, right: true, bottom: true, top: true },
-	modifiers: [
-	  interact.modifiers.restrictSize({
-		min: { width: 60, height: 60 }
-	  })
-	],
-	listeners: {
-	  move(event) {
-		const { width, height } = event.rect;
-		event.target.style.width = `${width}px`;
-		event.target.style.height = `${height}px`;
-	  }
-	}
-  })
-  .on('doubletap', function(event) {
-	rotateSection(event.currentTarget);
-  });
+    interact('.section')
+      .draggable({
+        onmove: dragMoveListener
+      })
+      .resizable({
+        edges: { left: true, right: true, bottom: true, top: true },
+        modifiers: [
+          interact.modifiers.restrictSize({
+            min: { width: 60, height: 60 }
+          })
+        ],
+        listeners: {
+          move(event) {
+            const { width, height } = event.rect;
+            event.target.style.width = `${width}px`;
+            event.target.style.height = `${height}px`;
+          }
+        }
+      })
+      .on('doubletap', function(event) {
+        rotateSection(event.currentTarget);
+      });
 
-document.getElementById('add-section-form').addEventListener('submit', function(event) {
-  event.preventDefault();
-  
-  const sectionName = document.getElementById('section-name').value;
-  const rows = parseInt(document.getElementById('section-rows').value);
-  const seatsPerRow = parseInt(document.getElementById('seats-per-row').value);
-  const aisleBreaks = document.getElementById('aisle-breaks').value.split(',').map(Number);
+    document.getElementById('add-section-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+      
+      const sectionName = document.getElementById('section-name').value;
+      const rows = parseInt(document.getElementById('section-rows').value);
+      const seatsPerRow = parseInt(document.getElementById('seats-per-row').value);
+      const aisleBreaks = document.getElementById('aisle-breaks').value.split(',').map(Number);
 
-  const section = {
-	name: sectionName,
-	rows: rows,
-	seatsPerRow: seatsPerRow,
-	aisleBreaks: aisleBreaks,
-	x: 0,
-	y: 0,
-	rotation: 0
-  };
+      const section = {
+        name: sectionName,
+        rows: rows,
+        seatsPerRow: seatsPerRow,
+        aisleBreaks: aisleBreaks,
+        x: 0,
+        y: 0,
+        rotation: 0
+      };
 
-  seatingPlan.push(section);
-  renderSeatingPlan();
-  updateJSON();
-  this.reset();
-});
+      seatingPlan.push(section);
+      renderSeatingPlan();
+      updateJSON();
+      this.reset();
+    });
 
-function renderSeatingPlan() {
-  const seatingPlanContainer = document.querySelector('.seating-plan');
-  seatingPlanContainer.innerHTML = '';
+    function renderSeatingPlan() {
+      const seatingPlanContainer = document.querySelector('.seating-plan');
+      seatingPlanContainer.innerHTML = '';
 
-  seatingPlan.forEach((section, index) => {
-	const sectionElement = document.createElement('div');
-	sectionElement.className = 'section';
-	sectionElement.setAttribute('data-index', index);
+      seatingPlan.forEach((section, index) => {
+        const sectionElement = document.createElement('div');
+        sectionElement.className = 'section';
+        sectionElement.setAttribute('data-index', index);
 
-	const rows = section.rows;
-	const seatsPerRow = section.seatsPerRow;
-	const aisleBreaks = section.aisleBreaks;
+        const rows = section.rows;
+        const seatsPerRow = section.seatsPerRow;
+        const aisleBreaks = section.aisleBreaks;
 
-	const seatGrid = document.createElement('div');
-	seatGrid.className = 'seat-grid';
+        const seatGrid = document.createElement('div');
+        seatGrid.className = 'seat-grid';
 
-	for (let row = 1; row <= rows; row++) {
-	  const rowElement = document.createElement('div');
-	  rowElement.className = 'seat-row';
+        for (let row = 1; row <= rows; row++) {
+          const rowElement = document.createElement('div');
+          rowElement.className = 'seat-row';
 
-	  for (let seat = 1; seat <= seatsPerRow; seat++) {
-		const seatElement = document.createElement('div');
-		seatElement.className = 'seat';
+          for (let seat = 1; seat <= seatsPerRow; seat++) {
+            const seatElement = document.createElement('div');
+            seatElement.className = 'seat';
 
-		if (aisleBreaks.includes(seat)) {
-		  seatElement.className = 'aisle';
-		  seatElement.innerHTML = 'Aisle';
-		} else {
-		  seatElement.textContent = `Seat ${getSeatNumber(row, seat, aisleBreaks)}`;
-		}
+            if (aisleBreaks.includes(seat)) {
+              seatElement.className = 'aisle';
+              seatElement.innerHTML = 'Aisle';
+            } else {
+              seatElement.textContent = `Seat ${getSeatNumber(row, seat, aisleBreaks)}`;
+            }
 
-		seatElement.addEventListener('click', function() {
-		  const sectionIndex = parseInt(this.closest('.section').getAttribute('data-index'));
-		  console.log(`Section: ${seatingPlan[sectionIndex].name}, Row: ${row}, Seat: ${getSeatNumber(row, seat, aisleBreaks)}`);
-		});
+            seatElement.addEventListener('click', function() {
+              const sectionIndex = parseInt(this.closest('.section').getAttribute('data-index'));
+              console.log(`Section: ${seatingPlan[sectionIndex].name}, Row: ${row}, Seat: ${getSeatNumber(row, seat, aisleBreaks)}`);
+            });
 
-		rowElement.appendChild(seatElement);
-	  }
+            rowElement.appendChild(seatElement);
+          }
 
-	  seatGrid.appendChild(rowElement);
-	}
+          seatGrid.appendChild(rowElement);
+        }
 
-	const deleteButton = document.createElement('button');
-	deleteButton.textContent = 'Delete';
-	deleteButton.addEventListener('click', function() {
-	  const sectionIndex = parseInt(this.closest('.section').getAttribute('data-index'));
-	  seatingPlan.splice(sectionIndex, 1);
-	  renderSeatingPlan();
-	  updateJSON();
-	});
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.addEventListener('click', function() {
+          const sectionIndex = parseInt(this.closest('.section').getAttribute('data-index'));
+          seatingPlan.splice(sectionIndex, 1);
+          renderSeatingPlan();
+          updateJSON();
+        });
 
-	const rotateButton = document.createElement('button');
-	rotateButton.textContent = 'Rotate';
-	rotateButton.addEventListener('click', function() {
-	  rotateSection(this.closest('.section'));
-	});
+        const rotateButton = document.createElement('button');
+        rotateButton.textContent = 'Rotate';
+        rotateButton.addEventListener('click', function() {
+          rotateSection(this.closest('.section'));
+        });
 
-	sectionElement.appendChild(seatGrid);
-	sectionElement.appendChild(deleteButton);
-	sectionElement.appendChild(rotateButton);
+        sectionElement.appendChild(seatGrid);
+        sectionElement.appendChild(deleteButton);
+        sectionElement.appendChild(rotateButton);
 
-	sectionElement.style.transform = `translate(${section.x}px, ${section.y}px) rotate(${section.rotation}deg)`;
-	sectionElement.setAttribute('data-x', section.x);
-	sectionElement.setAttribute('data-y', section.y);
-	sectionElement.setAttribute('data-rotation', section.rotation);
+        sectionElement.style.transform = `translate(${section.x}px, ${section.y}px) rotate(${section.rotation}deg)`;
+        sectionElement.setAttribute('data-x', section.x);
+        sectionElement.setAttribute('data-y', section.y);
+        sectionElement.setAttribute('data-rotation', section.rotation);
 
-	seatingPlanContainer.appendChild(sectionElement);
-  });
+        seatingPlanContainer.appendChild(sectionElement);
+      });
 
-  const stageElement = document.createElement('div');
-  stageElement.className = 'stage';
-  seatingPlanContainer.appendChild(stageElement);
-}
+      const stageElement = document.createElement('div');
+      stageElement.className = 'stage';
+      seatingPlanContainer.appendChild(stageElement);
+    }
 
-function updateJSON() {
-  const jsonOutput = document.getElementById('json-output');
-  jsonOutput.textContent = JSON.stringify(seatingPlan, null, 2);
-}
+    function updateJSON() {
+      const jsonOutput = document.getElementById('json-output');
+      jsonOutput.textContent = JSON.stringify(seatingPlan, null, 2);
+    }
 
-function dragMoveListener(event) {
-  const target = event.target;
-  const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
-  const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+    function dragMoveListener(event) {
+      const target = event.target;
+      const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+      const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
 
-  target.style.transform = `translate(${x}px, ${y}px) rotate(${target.getAttribute('data-rotation')}deg)`;
-  target.setAttribute('data-x', x);
-  target.setAttribute('data-y', y);
-}
+      target.style.transform = `translate(${x}px, ${y}px) rotate(${target.getAttribute('data-rotation')}deg)`;
+      target.setAttribute('data-x', x);
+      target.setAttribute('data-y', y);
+    }
 
-function rotateSection(sectionElement) {
-  const rotation = parseFloat(sectionElement.getAttribute('data-rotation')) || 0;
-  const newRotation = rotation + 90;
-  sectionElement.style.transform = `translate(${sectionElement.getAttribute('data-x')}px, ${sectionElement.getAttribute('data-y')}px) rotate(${newRotation}deg)`;
-  sectionElement.setAttribute('data-rotation', newRotation);
-}
+    function rotateSection(sectionElement) {
+      const rotation = parseFloat(sectionElement.getAttribute('data-rotation')) || 0;
+      const newRotation = rotation + 90;
+      sectionElement.style.transform = `translate(${sectionElement.getAttribute('data-x')}px, ${sectionElement.getAttribute('data-y')}px) rotate(${newRotation}deg)`;
+      sectionElement.setAttribute('data-rotation', newRotation);
+    }
 
-function getSeatNumber(row, seat, aisleBreaks) {
-  let seatNumber = seat;
-  aisleBreaks.forEach(aisle => {
-	if (seat > aisle) {
-	  seatNumber--;
-	}
-  });
-  return seatNumber;
-}
+    function getSeatNumber(row, seat, aisleBreaks) {
+      let seatNumber = seat;
+      aisleBreaks.forEach(aisle => {
+        if (seat > aisle) {
+          seatNumber--;
+        }
+      });
+      return seatNumber;
+    }
