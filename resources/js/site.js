@@ -112,135 +112,137 @@ var seatingPlanx = {
  
 const seatingPlan = [];
 
+interact('.section')
+  .draggable({
+	onmove: dragMoveListener
+  })
+  .resizable({
+	edges: { left: true, right: true, bottom: true, top: true },
+	modifiers: [
+	  interact.modifiers.restrictSize({
+		min: { width: 60, height: 60 }
+	  })
+	],
+	listeners: {
+	  move(event) {
+		const { width, height } = event.rect;
+		event.target.style.width = `${width}px`;
+		event.target.style.height = `${height}px`;
+	  }
+	}
+  })
+  .on('doubletap', function(event) {
+	rotateSection(event.currentTarget);
+  });
+
 document.getElementById('add-section-form').addEventListener('submit', function(event) {
   event.preventDefault();
-
-  const sectionName = document.getElementById('section-name-input').value;
-  const rows = parseInt(document.getElementById('rows-input').value);
-  const seatsPerRow = parseInt(document.getElementById('seats-per-row-input').value);
-  const aisleBreaksInput = document.getElementById('aisle-breaks-input').value;
-  const aisleBreaks = aisleBreaksInput.split(',').map(str => parseInt(str.trim())).filter(Boolean);
+  
+  const sectionName = document.getElementById('section-name').value;
+  const rows = parseInt(document.getElementById('section-rows').value);
+  const seatsPerRow = parseInt(document.getElementById('seats-per-row').value);
+  const aisleBreaks = document.getElementById('aisle-breaks').value.split(',').map(Number);
 
   const section = {
 	name: sectionName,
 	rows: rows,
 	seatsPerRow: seatsPerRow,
-	aisleBreaks: aisleBreaks,
-	position: { x: 0, y: 0 },
-	rotated: false
+	aisleBreaks: aisleBreaks
   };
 
   seatingPlan.push(section);
-
-  const sectionElement = createSectionElement(section);
-  document.getElementById('seating-plan').appendChild(sectionElement);
-  updateJSONOutput();
+  renderSeatingPlan();
+  updateJSON();
+  this.reset();
 });
 
-function createSectionElement(section) {
-  const sectionElement = document.createElement('div');
-  sectionElement.classList.add('section');
-  sectionElement.style.transform = `translate(${section.position.x}px, ${section.position.y}px)`;
+function renderSeatingPlan() {
+  const seatingPlanContainer = document.querySelector('.seating-plan');
+  seatingPlanContainer.innerHTML = '';
 
-  const sectionHeader = document.createElement('div');
-  sectionHeader.classList.add('section-header');
-  sectionElement.appendChild(sectionHeader);
+  seatingPlan.forEach((section, index) => {
+	const sectionElement = document.createElement('div');
+	sectionElement.className = 'section';
+	sectionElement.setAttribute('data-index', index);
 
-  const sectionName = document.createElement('div');
-  sectionName.classList.add('section-name');
-  sectionName.textContent = section.name;
-  sectionHeader.appendChild(sectionName);
+	const rows = section.rows;
+	const seatsPerRow = section.seatsPerRow;
+	const aisleBreaks = section.aisleBreaks;
 
-  const sectionButtons = document.createElement('div');
-  sectionButtons.classList.add('section-buttons');
-  sectionHeader.appendChild(sectionButtons);
+	const seatGrid = document.createElement('div');
+	seatGrid.className = 'seat-grid';
 
-  const rotateButton = document.createElement('button');
-  rotateButton.classList.add('btn', 'btn-secondary');
-  rotateButton.textContent = 'Rotate';
-  sectionButtons.appendChild(rotateButton);
+	for (let row = 1; row <= rows; row++) {
+	  const rowElement = document.createElement('div');
+	  rowElement.className = 'seat-row';
 
-  const deleteButton = document.createElement('button');
-  deleteButton.classList.add('btn', 'btn-danger');
-  deleteButton.textContent = 'Delete';
-  sectionButtons.appendChild(deleteButton);
+	  for (let seat = 1; seat <= seatsPerRow; seat++) {
+		const seatElement = document.createElement('div');
+		seatElement.className = 'seat';
 
-  rotateButton.addEventListener('click', function() {
-	sectionElement.classList.toggle('rotated');
-	section.rotated = !section.rotated;
-	updateJSONOutput();
-  });
-
-  deleteButton.addEventListener('click', function() {
-	const index = seatingPlan.findIndex(s => s === section);
-	if (index !== -1) {
-	  seatingPlan.splice(index, 1);
-	  sectionElement.remove();
-	  updateJSONOutput();
-	}
-  });
-
-  interact(sectionElement)
-	.draggable({
-	  modifiers: [
-		interact.modifiers.restrictRect({
-		  restriction: 'parent',
-		  endOnly: true
-		})
-	  ],
-	  listeners: {
-		move(event) {
-		  const target = event.target;
-		  const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
-		  const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
-
-		  target.style.transform = `translate(${x}px, ${y}px)`;
-		  target.setAttribute('data-x', x);
-		  target.setAttribute('data-y', y);
-		},
-		end(event) {
-		  const target = event.target;
-		  const rect = target.getBoundingClientRect();
-		  section.position = {
-			x: rect.left,
-			y: rect.top
-		  };
-		  updateJSONOutput();
+		if (aisleBreaks.includes(seat)) {
+		  seatElement.className = 'aisle';
+		  seatElement.innerHTML = 'Aisle';
+		} else {
+		  seatElement.textContent = `Seat ${seat}`;
 		}
+
+		seatElement.addEventListener('click', function() {
+		  const sectionIndex = parseInt(this.closest('.section').getAttribute('data-index'));
+		  console.log(`Section: ${seatingPlan[sectionIndex].name}, Row: ${row}, Seat: ${seat}`);
+		});
+
+		rowElement.appendChild(seatElement);
 	  }
-	})
-	.on('doubletap', function(event) {
-	  event.currentTarget.classList.toggle('rotated');
-	  section.rotated = !section.rotated;
-	  updateJSONOutput();
+
+	  seatGrid.appendChild(rowElement);
+	}
+
+	const deleteButton = document.createElement('button');
+	deleteButton.textContent = 'Delete';
+	deleteButton.addEventListener('click', function() {
+	  const sectionIndex = parseInt(this.closest('.section').getAttribute('data-index'));
+	  seatingPlan.splice(sectionIndex, 1);
+	  renderSeatingPlan();
+	  updateJSON();
 	});
 
-  const seatContainer = document.createElement('div');
-  seatContainer.classList.add('mt-4');
-  sectionElement.appendChild(seatContainer);
+	const rotateButton = document.createElement('button');
+	rotateButton.textContent = 'Rotate';
+	rotateButton.addEventListener('click', function() {
+	  rotateSection(this.closest('.section'));
+	});
 
-  for (let row = 1; row <= section.rows; row++) {
-	const seatRow = document.createElement('div');
-	seatRow.classList.add('flex');
+	sectionElement.appendChild(seatGrid);
+	sectionElement.appendChild(deleteButton);
+	sectionElement.appendChild(rotateButton);
 
-	for (let seat = 1; seat <= section.seatsPerRow; seat++) {
-	  const seatElement = document.createElement('div');
-	  seatElement.classList.add('seat');
-	  seatElement.textContent = `${row}-${seat}`;
+	seatingPlanContainer.appendChild(sectionElement);
+  });
 
-	  if (section.aisleBreaks.includes(seat)) {
-		seatElement.classList.add('aisle');
-	  }
-
-	  seatRow.appendChild(seatElement);
-	}
-
-	seatContainer.appendChild(seatRow);
-  }
-
-  return sectionElement;
+  const stageElement = document.createElement('div');
+  stageElement.className = 'stage';
+  seatingPlanContainer.appendChild(stageElement);
 }
 
-function updateJSONOutput() {
-  document.getElementById('json-output').value = JSON.stringify(seatingPlan, null, 2);
+function updateJSON() {
+  const jsonOutput = document.getElementById('json-output');
+  jsonOutput.textContent = JSON.stringify(seatingPlan, null, 2);
+}
+
+function dragMoveListener(event) {
+  const target = event.target;
+  const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+  const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+
+  target.style.transform = `translate(${x}px, ${y}px)`;
+  target.setAttribute('data-x', x);
+  target.setAttribute('data-y', y);
+}
+
+function rotateSection(sectionElement) {
+  const rotation = parseFloat(sectionElement.getAttribute('data-rotation')) || 0;
+  const newRotation = rotation + 90;
+  sectionElement.style.transform = `rotate(${newRotation}deg)`;
+  sectionElement.setAttribute('data-rotation', newRotation);
 }

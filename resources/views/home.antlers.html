@@ -1,17 +1,16 @@
-<div class="container mx-auto p-4">
-    <h1 class="text-2xl font-bold mb-4">Seating Plan Creator</h1>
+<h1>Seating Plan</h1>
+  <form id="add-section-form">
+    <label for="section-name">Section Name:</label>
+    <input type="text" id="section-name" required>
+    <label for="section-rows">Number of Rows:</label>
+    <input type="number" id="section-rows" required>
+    <label for="seats-per-row">Seats per Row:</label>
+    <input type="number" id="seats-per-row" required>
+    <label for="aisle-breaks">Aisle Breaks (comma-separated seat numbers):</label>
+    <input type="text" id="aisle-breaks">
+    <button type="submit">Add Section</button>
+  </form>
+  <div class="seating-plan"></div>
 
-    <form id="add-section-form" class="mb-4">
-      <div class="flex gap-2">
-        <input type="text" id="section-name-input" class="form-input" placeholder="Section Name" required>
-        <input type="number" id="rows-input" class="form-input" placeholder="Number of Rows" min="1" required>
-        <input type="number" id="seats-per-row-input" class="form-input" placeholder="Seats per Row" min="1" required>
-        <input type="text" id="aisle-breaks-input" class="form-input" placeholder="Aisle Breaks (Comma-separated)">
-        <button type="submit" class="btn btn-primary">Add Section</button>
-      </div>
-    </form>
-
-    <div id="seating-plan" class="relative"></div>
-
-    <textarea id="json-output" class="form-textarea mt-4" rows="8" readonly></textarea>
-  </div>
+  <h2>JSON Output</h2>
+  <pre id="json-output"></pre>
