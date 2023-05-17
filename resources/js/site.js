@@ -147,7 +147,10 @@ document.getElementById('add-section-form').addEventListener('submit', function(
 	name: sectionName,
 	rows: rows,
 	seatsPerRow: seatsPerRow,
-	aisleBreaks: aisleBreaks
+	aisleBreaks: aisleBreaks,
+	x: 0,
+	y: 0,
+	rotation: 0
   };
 
   seatingPlan.push(section);
@@ -184,12 +187,12 @@ function renderSeatingPlan() {
 		  seatElement.className = 'aisle';
 		  seatElement.innerHTML = 'Aisle';
 		} else {
-		  seatElement.textContent = `Seat ${seat}`;
+		  seatElement.textContent = `Seat ${getSeatNumber(row, seat, aisleBreaks)}`;
 		}
 
 		seatElement.addEventListener('click', function() {
 		  const sectionIndex = parseInt(this.closest('.section').getAttribute('data-index'));
-		  console.log(`Section: ${seatingPlan[sectionIndex].name}, Row: ${row}, Seat: ${seat}`);
+		  console.log(`Section: ${seatingPlan[sectionIndex].name}, Row: ${row}, Seat: ${getSeatNumber(row, seat, aisleBreaks)}`);
 		});
 
 		rowElement.appendChild(seatElement);
@@ -217,6 +220,11 @@ function renderSeatingPlan() {
 	sectionElement.appendChild(deleteButton);
 	sectionElement.appendChild(rotateButton);
 
+	sectionElement.style.transform = `translate(${section.x}px, ${section.y}px) rotate(${section.rotation}deg)`;
+	sectionElement.setAttribute('data-x', section.x);
+	sectionElement.setAttribute('data-y', section.y);
+	sectionElement.setAttribute('data-rotation', section.rotation);
+
 	seatingPlanContainer.appendChild(sectionElement);
   });
 
@@ -235,7 +243,7 @@ function dragMoveListener(event) {
   const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
   const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
 
-  target.style.transform = `translate(${x}px, ${y}px)`;
+  target.style.transform = `translate(${x}px, ${y}px) rotate(${target.getAttribute('data-rotation')}deg)`;
   target.setAttribute('data-x', x);
   target.setAttribute('data-y', y);
 }
@@ -243,6 +251,16 @@ function dragMoveListener(event) {
 function rotateSection(sectionElement) {
   const rotation = parseFloat(sectionElement.getAttribute('data-rotation')) || 0;
   const newRotation = rotation + 90;
-  sectionElement.style.transform = `rotate(${newRotation}deg)`;
+  sectionElement.style.transform = `translate(${sectionElement.getAttribute('data-x')}px, ${sectionElement.getAttribute('data-y')}px) rotate(${newRotation}deg)`;
   sectionElement.setAttribute('data-rotation', newRotation);
+}
+
+function getSeatNumber(row, seat, aisleBreaks) {
+  let seatNumber = seat;
+  aisleBreaks.forEach(aisle => {
+	if (seat > aisle) {
+	  seatNumber--;
+	}
+  });
+  return seatNumber;
 }
