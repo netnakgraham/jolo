@@ -1,0 +1,34 @@
+{
+	"venueName": "Example Theater",
+	"stage": {
+	  "rows": 10,
+	  "seatsPerRow": 12
+	},
+	"sections": [
+	  {
+		"name": "Front",
+		"rows": 5,
+		"seatsPerRow": 10,
+		"aisleBreaks": [3, 7]
+	  },
+	  {
+		"name": "Side Left",
+		"rows": 7,
+		"seatsPerRow": 6,
+		"aisleBreaks": [2, 4]
+	  },
+	  {
+		"name": "Side Right",
+		"rows": 7,
+		"seatsPerRow": 6,
+		"aisleBreaks": [2, 4]
+	  },
+	  {
+		"name": "Rear",
+		"rows": 8,
+		"seatsPerRow": 12,
+		"aisleBreaks": [6]
+	  }
+	]
+  }
+  

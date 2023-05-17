@@ -13,7 +13,14 @@
 			  {"number": "A5", "status": "available"},
 			  {"number": "A6", "status": "booked"},
 			  {"number": "A7", "status": "booked"},
-			  {"number": "A8", "status": "booked"}
+			  {"number": "A8", "status": "available"},
+			  {"number": "A9", "status": "booked"},
+			  {"number": "A10", "status": "booked"},
+			  {"number": "A11", "status": "booked"},
+			  {"number": "A12", "status": "available"},
+			  {"number": "A13", "status": "booked"},
+			  {"number": "A14", "status": "booked"},
+			  {"number": "A15", "status": "reserver" }
 			 
 			]
 		  },
@@ -27,7 +34,7 @@
 		  }
 		  
 		],
-		"aisleBreaks": ["A2","A4"] 
+		"aisleBreaks": ["A7", "B7"] 
 	  },
 	  {
 		"name": "Section Rear",
@@ -35,8 +42,8 @@
 		  {
 			"number": 1,
 			"seats": [
-			  {"number": "B1", "status": "available"},
-			  {"number": "B2", "status": "available"}
+			  {"number": "R1", "status": "available"},
+			  {"number": "R2", "status": "available"}
 			 
 			]
 		  }
