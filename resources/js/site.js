@@ -72,7 +72,7 @@ fetch('seating.json')
 });*/
 
 // Your JSON seating plan
-var seatingPlan = {
+var seatingPlanx = {
     "venueName": "Example Theater",
     "stage": {
         "rows": 10,
@@ -110,122 +110,137 @@ var seatingPlan = {
 	  ]
 };
  
-// Generate the seating plan HTML
-function generateSeatingPlan() {
-	seatingPlan.sections.forEach(function(section) {
-	  var sectionElement = document.createElement('div');
-	  sectionElement.classList.add('section');
-	  sectionElement.classList.add(section.position);
-  
-	  // Set section name
-	  var sectionNameElement = document.createElement('h3');
-	  sectionNameElement.textContent = section.name;
-	  sectionElement.appendChild(sectionNameElement);
-  
-	  // Generate seats for the section
-	  for (var row = 1; row <= section.rows; row++) {
-		var rowElement = document.createElement('div');
-		rowElement.classList.add('row');
-  
-		for (var seat = 1; seat <= section.seatsPerRow; seat++) {
-		  var seatElement = document.createElement('div');
-		  seatElement.classList.add('seat');
-		  seatElement.dataset.status = 'available';
-		  seatElement.dataset.section = section.name;
-		  seatElement.dataset.row = row;
-		  seatElement.dataset.seat = seat;
-		  seatElement.addEventListener('click', reserveSeat);
-  
-		  // Check if the seat is booked
-		  var isBooked = isSeatBooked(section.name, row, seat);
-		  if (isBooked) {
-			seatElement.classList.add('reserved');
-			seatElement.dataset.status = 'booked';
-		  }
-  
-		  // Apply aisle breaks
-		  if (section.aisleBreaks.includes(seat)) {
-			seatElement.style.marginRight = '30px';
-		  }
-  
-		  rowElement.appendChild(seatElement);
+const seatingPlan = [];
+
+document.getElementById('add-section-form').addEventListener('submit', function(event) {
+  event.preventDefault();
+
+  const sectionName = document.getElementById('section-name-input').value;
+  const rows = parseInt(document.getElementById('rows-input').value);
+  const seatsPerRow = parseInt(document.getElementById('seats-per-row-input').value);
+  const aisleBreaksInput = document.getElementById('aisle-breaks-input').value;
+  const aisleBreaks = aisleBreaksInput.split(',').map(str => parseInt(str.trim())).filter(Boolean);
+
+  const section = {
+	name: sectionName,
+	rows: rows,
+	seatsPerRow: seatsPerRow,
+	aisleBreaks: aisleBreaks,
+	position: { x: 0, y: 0 },
+	rotated: false
+  };
+
+  seatingPlan.push(section);
+
+  const sectionElement = createSectionElement(section);
+  document.getElementById('seating-plan').appendChild(sectionElement);
+  updateJSONOutput();
+});
+
+function createSectionElement(section) {
+  const sectionElement = document.createElement('div');
+  sectionElement.classList.add('section');
+  sectionElement.style.transform = `translate(${section.position.x}px, ${section.position.y}px)`;
+
+  const sectionHeader = document.createElement('div');
+  sectionHeader.classList.add('section-header');
+  sectionElement.appendChild(sectionHeader);
+
+  const sectionName = document.createElement('div');
+  sectionName.classList.add('section-name');
+  sectionName.textContent = section.name;
+  sectionHeader.appendChild(sectionName);
+
+  const sectionButtons = document.createElement('div');
+  sectionButtons.classList.add('section-buttons');
+  sectionHeader.appendChild(sectionButtons);
+
+  const rotateButton = document.createElement('button');
+  rotateButton.classList.add('btn', 'btn-secondary');
+  rotateButton.textContent = 'Rotate';
+  sectionButtons.appendChild(rotateButton);
+
+  const deleteButton = document.createElement('button');
+  deleteButton.classList.add('btn', 'btn-danger');
+  deleteButton.textContent = 'Delete';
+  sectionButtons.appendChild(deleteButton);
+
+  rotateButton.addEventListener('click', function() {
+	sectionElement.classList.toggle('rotated');
+	section.rotated = !section.rotated;
+	updateJSONOutput();
+  });
+
+  deleteButton.addEventListener('click', function() {
+	const index = seatingPlan.findIndex(s => s === section);
+	if (index !== -1) {
+	  seatingPlan.splice(index, 1);
+	  sectionElement.remove();
+	  updateJSONOutput();
+	}
+  });
+
+  interact(sectionElement)
+	.draggable({
+	  modifiers: [
+		interact.modifiers.restrictRect({
+		  restriction: 'parent',
+		  endOnly: true
+		})
+	  ],
+	  listeners: {
+		move(event) {
+		  const target = event.target;
+		  const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+		  const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+
+		  target.style.transform = `translate(${x}px, ${y}px)`;
+		  target.setAttribute('data-x', x);
+		  target.setAttribute('data-y', y);
+		},
+		end(event) {
+		  const target = event.target;
+		  const rect = target.getBoundingClientRect();
+		  section.position = {
+			x: rect.left,
+			y: rect.top
+		  };
+		  updateJSONOutput();
 		}
-  
-		sectionElement.appendChild(rowElement);
 	  }
-  
-	  document.body.appendChild(sectionElement);
+	})
+	.on('doubletap', function(event) {
+	  event.currentTarget.classList.toggle('rotated');
+	  section.rotated = !section.rotated;
+	  updateJSONOutput();
 	});
-  }
-  
-  // Check if a seat is booked
-  function isSeatBooked(section, row, seat) {
-	// Simulating the booked seats data from the server
-	var bookedSeats = [
-	  { section: 'Front', row: 1, seat: 5 },
-	  { section: 'Side Left', row: 3, seat: 2 },
-	  { section: 'Rear', row: 2, seat: 9 }
-	  // Add more booked seats as needed
-	];
-  
-	for (var i = 0; i < bookedSeats.length; i++) {
-	  var bookedSeat = bookedSeats[i];
-	  if (
-		bookedSeat.section === section &&
-		bookedSeat.row === row &&
-		bookedSeat.seat === seat
-	  ) {
-		return true;
+
+  const seatContainer = document.createElement('div');
+  seatContainer.classList.add('mt-4');
+  sectionElement.appendChild(seatContainer);
+
+  for (let row = 1; row <= section.rows; row++) {
+	const seatRow = document.createElement('div');
+	seatRow.classList.add('flex');
+
+	for (let seat = 1; seat <= section.seatsPerRow; seat++) {
+	  const seatElement = document.createElement('div');
+	  seatElement.classList.add('seat');
+	  seatElement.textContent = `${row}-${seat}`;
+
+	  if (section.aisleBreaks.includes(seat)) {
+		seatElement.classList.add('aisle');
 	  }
+
+	  seatRow.appendChild(seatElement);
 	}
-  
-	return false;
+
+	seatContainer.appendChild(seatRow);
   }
-  
-  // Reserve a seat
-  function reserveSeat() {
-	if (this.dataset.status !== 'available') {
-	  return;
-	}
-  
-	this.classList.add('selected');
-	this.dataset.status = 'reserved';
-  
-	// Update the JSON data or send a request to the server to mark the seat as reserved
-	var section = this.dataset.section;
-	var row = parseInt(this.dataset.row);
-	var seat = parseInt(this.dataset.seat);
-  
-	// Update the seating plan display
-	generateSeatingPlan();
-  }
-  
-  // Add seat to shopping cart
-  function addToCart(section, row, seat) {
-	var cartItemsElement = document.getElementById('cart-items');
-  
-	// Create cart item element
-	var cartItemElement = document.createElement('li');
-	cartItemElement.textContent = section + ' - Row ' + row + ', Seat ' + seat;
-  
-	cartItemsElement.appendChild(cartItemElement);
-  }
-  
-  // Purchase seats in the shopping cart
-  function purchase() {
-	var cartItemsElement = document.getElementById('cart-items');
-	var cartItems = cartItemsElement.getElementsByTagName('li');
-  
-	// Perform the purchase logic here, e.g., send a request to the server with the selected seats
-  
-	// Clear the shopping cart
-	while (cartItems.length > 0) {
-	  cartItems[0].remove();
-	}
-  }
-  
-  
-	  // Generate the seating plan on page load
-window.onload = function () {
-    generateSeatingPlan();
-};
+
+  return sectionElement;
+}
+
+function updateJSONOutput() {
+  document.getElementById('json-output').value = JSON.stringify(seatingPlan, null, 2);
+}

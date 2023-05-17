@@ -1,78 +1,71 @@
 <!doctype html>
 <html lang="{{ site:short_locale }}">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{{ title ?? site:name }}</title>
+        {{ vite src="resources/js/site.js|resources/css/site.css" }}
 
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>{{ title ?? site:name }}</title>
 
-	{{ vite src="resources/css/site.css" }}
 
-	<style>
-		#seating-plan {
-			display: grid;
-			grid-template-columns: repeat(4, 1fr);
-			grid-gap: 20px;
-			justify-items: center;
-			margin-top: 50px;
-		  }
-		  
-		  .section {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			padding: 10px;
-			border: 1px solid #ccc;
-		  }
-		  
-		  .row {
-			display: flex;
-			align-items: center;
-		  }
-		  
-		  .seat {
-			width: 40px;
-			height: 40px;
-			border: 1px solid #ccc;
-			margin: 5px;
-			cursor: pointer;
-		  }
-		  
-		  .stage {
-			text-align: center;
-		  }
-		  
-		  .reserved {
-			background-color: #FFD700;
-		  }
-		  
-		  .selected {
-			background-color: #00FF00;
-		  }
-		  
-		  .in-cart {
-			background-color: #FFA500;
-		  }
-	  </style>
-</head>
+		<script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
 
-<body>
 
-	<div class="stage"></div>
-	<div class="section side left"></div>
-	<div class="section front"></div>
-	<div class="section side right"></div>
-	<div class="section rear"></div>
-  
-	<div id="shopping-cart">
-	  <h3>Shopping Cart</h3>
-	  <ul id="cart-items"></ul>
-	  <button onclick="purchase()">Purchase</button>
-	</div>
-		{{ vite src="resources/js/site.js" }}
+		<style>
+			.section {
+				position: absolute;
+				background-color: #f0f0f0;
+				border: 1px solid #ccc;
+				padding: 10px;
+				cursor: move;
+			  }
+		  
+			  .section-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-bottom: 8px;
+			  }
+		  
+			  .section-name {
+				font-weight: bold;
+			  }
+		  
+			  .section-buttons {
+				display: flex;
+			  }
+		  
+			  .section-buttons button {
+				margin-left: 4px;
+			  }
+		  
+			  .seat {
+				flex: 1;
+				background-color: #e2e2e2;
+				padding: 5px;
+				text-align: center;
+			  }
+		  
+			  .aisle {
+				background-color: #ccc;
+			  }
+		  
+			  .rotated {
+				transform: rotate(-90deg);
+			  }
+  </style>
 
-</body>
+
+    </head>
+    <body class="bg-gray-100 font-sans leading-normal text-gray-800">
+		
+        <div class="mx-auto px-2 lg:min-h-screen flex flex-col items-center justify-center">
+            {{ template_content }}
+
+
+        </div>
+    </body>
 
 
 
