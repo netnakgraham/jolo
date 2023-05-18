@@ -28,6 +28,13 @@ const seatingPlan = [];
         rotateSection(event.currentTarget);
       });
 
+	const savePlanButton = document.getElementById('save-plan');
+
+	savePlanButton.addEventListener('click', function() {
+		updateJSON();
+	  });
+
+
     document.getElementById('add-section-form').addEventListener('submit', function(event) {
       event.preventDefault();
       
@@ -62,8 +69,12 @@ const seatingPlan = [];
         sectionElement.setAttribute('data-index', index);
 
         const rows = section.rows;
-        const seatsPerRow = section.seatsPerRow;
+        var seatsPerRow = section.seatsPerRow;
         const aisleBreaks = section.aisleBreaks;
+
+		if (aisleBreaks) {
+			seatsPerRow = seatsPerRow + aisleBreaks.length;
+		}
 
         const seatGrid = document.createElement('div');
         seatGrid.className = 'seat-grid';
@@ -76,9 +87,11 @@ const seatingPlan = [];
             const seatElement = document.createElement('div');
             seatElement.className = 'seat';
 
-            if (aisleBreaks.includes(seat)) {
+            if (aisleBreaks.includes(seat-1)) {
               seatElement.className = 'aisle';
               seatElement.innerHTML = 'Aisle';
+			 
+
             } else {
               seatElement.textContent = `Seat ${getSeatNumber(row, seat, aisleBreaks)}`;
             }
