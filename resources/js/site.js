@@ -5,7 +5,7 @@
 
 const seatingPlan = [];
 
-    interact('.section')
+    interact('.section, .stage')
       .draggable({
         onmove: dragMoveListener
       })
@@ -27,6 +27,8 @@ const seatingPlan = [];
       .on('doubletap', function(event) {
         rotateSection(event.currentTarget);
       });
+
+	  
 
 	const savePlanButton = document.getElementById('save-plan');
 
@@ -58,6 +60,51 @@ const seatingPlan = [];
       updateJSON();
       this.reset();
     });
+
+	interact('.stage').draggable({
+        modifiers: [
+          interact.modifiers.restrictRect({
+            restriction: '.seating-plan',
+            endOnly: true
+          })
+        ],
+        listeners: {
+          move: dragMoveListener
+        }
+      }).resizable({
+        edges: { left: true, right: true },
+        modifiers: [
+          interact.modifiers.restrictSize({
+            min: { width: 50 }
+          })
+        ],
+        listeners: {
+          move: resizeListener
+        }
+      });
+
+
+	function dragMoveListener(event) {
+		const target = event.target;
+		const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+		const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+  
+		target.style.transform = `translate(${x}px, ${y}px)`;
+		target.setAttribute('data-x', x);
+		target.setAttribute('data-y', y);
+	  }
+  
+	  function resizeListener(event) {
+		const target = event.target;
+		let { width, height } = event.rect;
+  
+		width = Math.round(width);
+		height = Math.round(height);
+  
+		target.style.width = `${width}px`;
+		target.style.height = `${height}px`;
+	  }
+
 
     function renderSeatingPlan() {
       const seatingPlanContainer = document.querySelector('.seating-plan');
@@ -144,16 +191,8 @@ const seatingPlan = [];
       jsonOutput.textContent = JSON.stringify(seatingPlan, null, 2);
     }
 
-    function dragMoveListener(event) {
-      const target = event.target;
-      const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
-      const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
-
-      target.style.transform = `translate(${x}px, ${y}px) rotate(${target.getAttribute('data-rotation')}deg)`;
-      target.setAttribute('data-x', x);
-      target.setAttribute('data-y', y);
-    }
-
+	
+    
     function rotateSection(sectionElement) {
       const rotation = parseFloat(sectionElement.getAttribute('data-rotation')) || 0;
       const newRotation = rotation + 90;
