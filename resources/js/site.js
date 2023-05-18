@@ -5,24 +5,21 @@
 
 const seatingPlan = [];
 
-    interact('.section, .stage')
+    interact('.section')
       .draggable({
         onmove: dragMoveListener
       })
       .resizable({
         edges: { left: true, right: true, bottom: true, top: true },
         modifiers: [
-          interact.modifiers.restrictSize({
-            min: { width: 60, height: 60 }
-          })
+			interact.modifiers.restrictRect({
+				restriction: '.seating-plan',
+				endOnly: true
+			  })
         ],
         listeners: {
-          move(event) {
-            const { width, height } = event.rect;
-            event.target.style.width = `${width}px`;
-            event.target.style.height = `${height}px`;
-          }
-        }
+			move: dragMoveListener
+		  }
       })
       .on('doubletap', function(event) {
         rotateSection(event.currentTarget);
@@ -192,6 +189,51 @@ const seatingPlan = [];
     }
 
 	
+	interact('.rotation-handle')
+  .draggable({
+    onstart: function(event) {
+      var box = event.target.parentElement;
+      var rect = box.getBoundingClientRect();
+
+      // store the center as the element has css `transform-origin: center center`
+      box.setAttribute('data-center-x', rect.left + rect.width / 2);
+      box.setAttribute('data-center-y', rect.top + rect.height / 2);
+      // get the angle of the element when the drag starts
+      box.setAttribute('data-angle', getDragAngle(event));
+    },
+    onmove: function(event) {
+      var box = event.target.parentElement;
+
+      var pos = {
+        x: parseFloat(box.getAttribute('data-x')) || 0,
+        y: parseFloat(box.getAttribute('data-y')) || 0
+      };
+
+      var angle = getDragAngle(event);
+
+      // update transform style on dragmove
+      box.style.transform = 'translate(' + pos.x + 'px, ' + pos.y + 'px) rotate(' + angle + 'rad' + ')';
+    },
+    onend: function(event) {
+      var box = event.target.parentElement;
+
+      // save the angle on dragend
+      box.setAttribute('data-angle', getDragAngle(event));
+    },
+  })
+
+function getDragAngle(event) {
+  var box = event.target.parentElement;
+  var startAngle = parseFloat(box.getAttribute('data-angle')) || 0;
+  var center = {
+    x: parseFloat(box.getAttribute('data-center-x')) || 0,
+    y: parseFloat(box.getAttribute('data-center-y')) || 0
+  };
+  var angle = Math.atan2(center.y - event.clientY,
+    center.x - event.clientX);
+
+  return angle - startAngle;
+}
     
     function rotateSection(sectionElement) {
       const rotation = parseFloat(sectionElement.getAttribute('data-rotation')) || 0;
