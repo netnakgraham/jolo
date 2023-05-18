@@ -3,6 +3,8 @@ const seatingPlan = [];
 const form = document.getElementById('section-form');
 const saveButton = document.getElementById('save-btn');
 
+
+
 form.addEventListener('submit', function(event) {
   event.preventDefault();
 
