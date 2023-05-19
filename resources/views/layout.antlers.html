@@ -11,22 +11,67 @@
 		<script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
 
 		<style>
-			  /* Add CSS styles for the interface elements */
-			  .grid {
-				display: grid;
-				grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
-				grid-gap: 5px;
-			}
 			.section {
-				background-color: lightgray;
-				padding: 10px;
-			}
-			.row-name-input {
+				position: absolute;
+				padding: 8px;
+				border: 1px solid #ccc;
+				background-color: #f7fafc;
+			  }
+			  
+			  .row {
+				display: flex;
+				align-items: center;
+				margin-bottom: 4px;
+			  }
+			  
+			  .row-label {
 				width: 80px;
-			}
-			.seat-number-input {
+				margin-right: 8px;
+				border: 1px solid #ccc;
+				padding: 4px;
+			  }
+			  
+			  .seat {
 				width: 40px;
-			}
+				height: 40px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				border: 1px solid #ccc;
+				cursor: pointer;
+			  }
+			  
+			  .aisle {
+				background-color: #fde68a;
+			  }
+			  
+			  .seat-label {
+				font-size: 12px;
+			  }
+			  
+			  .btn-delete,
+			  .btn-rotate {
+				margin-top: 8px;
+				padding: 4px 8px;
+				background-color: #ccc;
+				border: none;
+				color: #fff;
+				cursor: pointer;
+			  }
+			  
+			  .btn-delete:hover,
+			  .btn-rotate:hover {
+				background-color: #999;
+			  }
+			  
+			  #app {
+				max-width: 600px;
+				margin: 0 auto;
+			  }
+			  
+			  #jsonOutput {
+				resize: none;
+			  }
 		</style>
 
 

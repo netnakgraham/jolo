@@ -1,98 +1,167 @@
-    // Function to create a grid of seats
-    function createSeatingGrid(x, y) {
-		const seatingPlan = document.getElementById('seatingPlan');
-		seatingPlan.innerHTML = '';
-  
-		for (let i = 0; i < y; i++) {
-		  const row = document.createElement('div');
-		  row.classList.add('flex');
-		  
-		  for (let j = 0; j < x; j++) {
-			const seat = document.createElement('div');
-			seat.classList.add('w-10', 'h-10', 'border', 'text-center');
-			seat.innerText = `Row ${i + 1}, Seat ${j + 1}`;
-  
-			// Add event listener to seat
-			seat.addEventListener('click', function () {
-			  console.log(`Section: ${this.dataset.section}, Row: ${this.dataset.row}, Seat: ${this.dataset.seat}`);
-			});
-  
-			row.appendChild(seat);
-		  }
-  
-		  seatingPlan.appendChild(row);
-		}
-	  }
-  
-	  // Add event listener to the "Add Section" button
-	  document.getElementById('addSectionBtn').addEventListener('click', function () {
-		const sectionName = document.getElementById('sectionName').value;
-		const sectionRows = parseInt(document.getElementById('sectionRows').value);
-		const sectionSeats = parseInt(document.getElementById('sectionSeats').value);
-		const aisleBreaks = document.getElementById('aisleBreaks').value.split(',');
-  
-		const seatingPlan = document.getElementById('seatingPlan');
-		const section = document.createElement('div');
-		section.classList.add('mt-8');
-		section.innerHTML = `<h2 class="text-xl font-bold">${sectionName}</h2>`;
-  
-		createSeatingGrid(sectionSeats, sectionRows);
-  
-		// Add rotation and draggability using Interact.js
-		interact(section)
-		  .draggable({
-			onmove: function (event) {
-			  const target = event.target;
-			  const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
-			  const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
-  
-			  target.style.transform = `translate(${x}px, ${y}px)`;
-			  target.setAttribute('data-x', x);
-			  target.setAttribute('data-y', y);
-			}
-		  })
-		  .resizable({
-			edges: { left: true, right: true, bottom: true, top: true },
-			onmove: function (event) {
-			  const target = event.target;
-			  const x = (parseFloat(target.getAttribute('data-x')) || 0);
-			  const y = (parseFloat(target.getAttribute('data-y')) || 0);
-  
-			  target.style.width = event.rect.width + 'px';
-			  target.style.height = event.rect.height + 'px';
-  
-			  target.setAttribute('data-x', x);
-			  target.setAttribute('data-y', y);
-			}
-		  })
-		  .gesturable({
-			onmove: function (event) {
-			  const target = event.target;
-			  const x = (parseFloat(target.getAttribute('data-x')) || 0);
-			  const y = (parseFloat(target.getAttribute('data-y')) || 0);
-			  const angle = (parseFloat(target.getAttribute('data-angle')) || 0) + event.da;
-  
-			  target.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
-			  target.setAttribute('data-x', x);
-			  target.setAttribute('data-y', y);
-			  target.setAttribute('data-angle', angle);
-			}
-		  });
-  
-		seatingPlan.appendChild(section);
-	  });
-  
-	  // Initial grid creation
-	  const inputX = document.getElementById('inputX');
-	  const inputY = document.getElementById('inputY');
-	  const gridCreateHandler = function () {
-		const x = parseInt(inputX.value);
-		const y = parseInt(inputY.value);
-		createSeatingGrid(x, y);
-	  };
-	  inputX.addEventListener('input', gridCreateHandler);
-	  inputY.addEventListener('input', gridCreateHandler);
+let gridX = 0;
+let gridY = 0;
+const seatingPlanData = [];
 
+// Function to create a new section
+function createSection(sectionName, numRows, seatsPerRow, aisleBreaks) {
+  const section = document.createElement("div");
+  section.classList.add("section");
+  section.innerHTML = `
+    <h3>${sectionName}</h3>
+    <button class="btn-delete" data-section="${sectionName}">Delete</button>
+    <button class="btn-rotate" data-section="${sectionName}">Rotate</button>
+  `;
+
+  const rows = [];
+  
+  for (let i = 1; i <= numRows; i++) {
+    const row = document.createElement("div");
+    row.classList.add("row");
+    
+    const rowLabel = document.createElement("input");
+    rowLabel.type = "text";
+    rowLabel.placeholder = "Row Label";
+    rowLabel.classList.add("row-label");
+    row.appendChild(rowLabel);
+    
+    const seats = [];
+    for (let j = 1; j <= seatsPerRow; j++) {
+      const seat = document.createElement("div");
+      seat.classList.add("seat");
+      seat.innerHTML = `<span class="seat-label">Seat ${j}</span>`;
+      
+      if (aisleBreaks.includes(j)) {
+        seat.classList.add("aisle");
+      }
+      
+      row.appendChild(seat);
+      seats.push(`Seat ${j}`);
+    }
+    
+    section.appendChild(row);
+    rows.push({ label: "", seats });
+  }
+  
+  seatingPlanData.push({ section: sectionName, rows });
+  
+  return section;
+}
+
+// Function to initialize the draggable and rotatable behavior
+function initializeInteract(element) {
+  interact(element)
+    .draggable({
+      listeners: {
+        move(event) {
+          const target = event.target;
+          const x = (parseFloat(target.getAttribute("data-x")) || 0) + event.dx;
+          const y = (parseFloat(target.getAttribute("data-y")) || 0) + event.dy;
+
+          target.style.transform = `translate(${x}px, ${y}px)`;
+          target.setAttribute("data-x", x);
+          target.setAttribute("data-y", y);
+        }
+      }
+    })
+    .gesturable({
+      listeners: {
+        move(event) {
+          const target = event.target;
+          const rotation = (parseFloat(target.getAttribute("data-rotation")) || 0) + event.da;
+
+          target.style.transform = `rotate(${rotation}deg)`;
+          target.setAttribute("data-rotation", rotation);
+        }
+      }
+    });
+}
+
+// Function to handle seat clicks
+function handleSeatClick(event) {
+  const seat = event.currentTarget;
+  const sectionName = seat.closest(".section").dataset.section;
+  const rowLabel = seat.closest(".row").querySelector(".row-label").value;
+  const seatNumber = seat.querySelector(".seat-label").textContent;
+
+  console.log(`Section: ${sectionName}, Row: ${rowLabel}, Seat: ${seatNumber}`);
+}
+
+// Function to delete a section
+function deleteSection(event) {
+  const sectionName = event.target.dataset.section;
+  const sectionIndex = seatingPlanData.findIndex((data) => data.section === sectionName);
+  
+  if (sectionIndex !== -1) {
+    seatingPlanData.splice(sectionIndex, 1);
+    event.target.closest(".section").remove();
+    updateJsonOutput();
+  }
+}
+
+// Function to rotate a section
+function rotateSection(event) {
+  const sectionName = event.target.dataset.section;
+  const section = event.target.closest(".section");
+  const rotation = (parseFloat(section.getAttribute("data-rotation")) || 0) + 45;
+  section.style.transform = `rotate(${rotation}deg)`;
+  section.setAttribute("data-rotation", rotation);
+}
+
+// Function to update the JSON output
+function updateJsonOutput() {
+  document.getElementById("jsonOutput").value = JSON.stringify(seatingPlanData, null, 2);
+}
+
+// Get the grid inputs and seating plan container
+const gridXInput = document.getElementById("gridX");
+const gridYInput = document.getElementById("gridY");
+const seatingPlan = document.getElementById("seatingPlan");
+
+// Event listener for grid inputs
+gridXInput.addEventListener("change", () => {
+  gridX = parseInt(gridXInput.value);
+  createGrid();
+});
+gridYInput.addEventListener("change", () => {
+  gridY = parseInt(gridYInput.value);
+  createGrid();
+});
+
+// Function to create the grid based on inputs
+function createGrid() {
+  seatingPlanData.length = 0; // Clear existing seating plan data
+  seatingPlan.innerHTML = ""; // Clear existing seating plan
+  
+  for (let i = 0; i < gridY; i++) {
+    for (let j = 0; j < gridX; j++) {
+      const sectionName = `Section ${i + 1}-${j + 1}`;
+      const section = createSection(sectionName, 5, 10, [4, 7]); // Customize section properties here
+      
+      initializeInteract(section); // Initialize draggable and rotatable behavior
+      
+      // Add event listeners to seats
+      const seats = section.querySelectorAll(".seat");
+      seats.forEach((seat) => {
+        seat.addEventListener("click", handleSeatClick);
+      });
+      
+      // Add event listeners to delete and rotate buttons
+      const btnDelete = section.querySelector(".btn-delete");
+      btnDelete.addEventListener("click", deleteSection);
+      
+      const btnRotate = section.querySelector(".btn-rotate");
+      btnRotate.addEventListener("click", rotateSection);
+      
+      section.dataset.section = sectionName;
+      seatingPlan.appendChild(section);
+    }
+  }
+  
+  updateJsonOutput();
+}
+
+// Initial grid creation
+createGrid();
 
 /*const shoppingCart = [];
 

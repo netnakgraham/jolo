@@ -1,40 +1,15 @@
-<div class="container mx-auto mt-8">
-    <h1 class="text-3xl font-bold mb-4">Music Venue Seating Plan Creation Tool</h1>
-    
-    <div class="flex">
-      <div class="w-1/2 pr-8">
-        <h2 class="text-xl font-bold mb-2">Grid Settings</h2>
-        <div class="flex mb-4">
-          <label for="inputX" class="mr-2">Grid X:</label>
-          <input id="inputX" type="number" min="1" class="w-16 px-2 py-1 border rounded">
-        </div>
-        <div class="flex">
-          <label for="inputY" class="mr-2">Grid Y:</label>
-          <input id="inputY" type="number" min="1" class="w-16 px-2 py-1 border rounded">
-        </div>
-      </div>
-      
-      <div class="w-1/2 pl-8">
-        <h2 class="text-xl font-bold mb-2">Add Section</h2>
-        <div class="mb-4">
-          <label for="sectionName" class="block">Section Name:</label>
-          <input id="sectionName" type="text" class="w-full px-2 py-1 border rounded">
-        </div>
-        <div class="mb-4">
-          <label for="sectionRows" class="block">Number of Rows:</label>
-          <input id="sectionRows" type="number" min="1" class="w-full px-2 py-1 border rounded">
-        </div>
-        <div class="mb-4">
-          <label for="sectionSeats" class="block">Seats per Row:</label>
-          <input id="sectionSeats" type="number" min="1" class="w-full px-2 py-1 border rounded">
-        </div>
-        <div class="mb-4">
-          <label for="aisleBreaks" class="block">Aisle Breaks (comma-separated seat numbers):</label>
-          <input id="aisleBreaks" type="text" class="w-full px-2 py-1 border rounded">
-        </div>
-        <button id="addSectionBtn" class="px-4 py-2 bg-blue-500 text-white rounded">Add Section</button>
-      </div>
-    </div>
-    
-    <div id="seatingPlan" class="mt-8"></div>
+<div id="app" class="p-8">
+	<div class="mb-4">
+	  <label for="gridX">Grid X:</label>
+	  <input type="number" id="gridX" class="border border-gray-400 px-2 py-1">
+	</div>
+	<div class="mb-4">
+	  <label for="gridY">Grid Y:</label>
+	  <input type="number" id="gridY" class="border border-gray-400 px-2 py-1">
+	</div>
+	<div id="seatingPlan" class="relative">
+	  <!-- Sections and seats will be dynamically added here -->
+	</div>
+	<textarea id="jsonOutput" class="mt-4 border border-gray-400 p-2 w-full" rows="5" readonly></textarea>
   </div>
+  
