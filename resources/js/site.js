@@ -49,15 +49,15 @@ document.getElementById("add-section-form")
             .map(Number);
 
 		
-        const section = {
-           
-			name: sectionName,
-            rows: rows,
-            x: 0,
-            y: 0,
-            rotation: 0,
-        };
-
+			const section = {
+				name: sectionName,
+				rows: rows,
+				seatsPerRow: seatsPerRow,
+				aisleBreaks: aisleBreaks,
+				x: 0,
+				y: 0,
+				rotation: 0
+			  };
         seatingPlan.push(section);
 
         renderSeatingPlan();
@@ -96,7 +96,7 @@ interact(".stage")
 
 function dragMoveListener(event) {
 	
-    const target = event.target;
+    const target = event.target.closest(".section");
 
     const x = (parseFloat(target.getAttribute("data-x")) || 0) + event.dx;
     const y = (parseFloat(target.getAttribute("data-y")) || 0) + event.dy;
@@ -108,7 +108,7 @@ function dragMoveListener(event) {
 
 
 function updateSectionPosition(event) {
-	const target = event.target;
+	const target = event.target.closest(".section");
 
 	var rect = target.getBoundingClientRect();
 
@@ -116,17 +116,19 @@ function updateSectionPosition(event) {
 	var x = rect.x;
 	var y = rect.y;
 
-	//console.log(x +  ' -- ' + y);
-
 	const rotation = getRotation(target);
   
-	target.setAttribute('data-x', x);
-	target.setAttribute('data-y', y);
+
+	x = target.getAttribute("data-x");
+    y = target.getAttribute("data-y");
+
+	//target.setAttribute('data-x', x);
+	//target.setAttribute('data-y', y);
   
 	seatingPlan.forEach((section, index) => {
 
 		//console.log(index +  ' ' + target.getAttribute('data-index'));
-		if (index == target.parentElement.getAttribute('data-index')) {
+		if (index == target.getAttribute('data-index')) {
 			section.x = x;
 			section.y = y;
 			section.rotation = rotation;
