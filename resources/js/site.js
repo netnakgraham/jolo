@@ -49,15 +49,16 @@ document.getElementById("add-section-form")
             .map(Number);
 
 		
-			const section = {
-				name: sectionName,
-				rows: rows,
-				seatsPerRow: seatsPerRow,
-				aisleBreaks: aisleBreaks,
-				x: 0,
-				y: 0,
-				rotation: 0
-			  };
+		const section = {
+			name: sectionName,
+			rows: rows,
+			seatsPerRow: seatsPerRow,
+			aisleBreaks: aisleBreaks > 0 ? aisleBreaks : [],
+			x: 0,
+			y: 0,
+			rotation: 0
+		};
+
         seatingPlan.push(section);
 
         renderSeatingPlan();
@@ -179,11 +180,10 @@ function renderSeatingPlan() {
         var seatsPerRow = section.seatsPerRow;
         const aisleBreaks = section.aisleBreaks;
 
-		
 
         if (aisleBreaks) {
             seatsPerRow = seatsPerRow + aisleBreaks.length;
-        }
+        } 
 
         const seatGrid = document.createElement("div");
         seatGrid.className = "seat-grid";
