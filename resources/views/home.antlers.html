@@ -7,8 +7,25 @@
 	  <label for="gridY">Grid Y:</label>
 	  <input type="number" id="gridY" class="border border-gray-400 px-2 py-1">
 	</div>
+	<div class="mb-4">
+	  <label for="sectionName">Section Name:</label>
+	  <input type="text" id="sectionName" class="border border-gray-400 px-2 py-1">
+	</div>
+	<div class="mb-4">
+	  <label for="numRows">Number of Rows:</label>
+	  <input type="number" id="numRows" class="border border-gray-400 px-2 py-1">
+	</div>
+	<div class="mb-4">
+	  <label for="seatsPerRow">Seats per Row:</label>
+	  <input type="number" id="seatsPerRow" class="border border-gray-400 px-2 py-1">
+	</div>
+	<div class="mb-4">
+	  <label for="aisleBreaks">Aisle Breaks (comma-separated):</label>
+	  <input type="text" id="aisleBreaks" class="border border-gray-400 px-2 py-1">
+	</div>
+	<button id="addSectionButton" class="btn-add-section">Add Section</button>
 	<div id="seatingPlan" class="relative">
-	  <!-- Sections and seats will be dynamically added here -->
+	  <!-- Sections will be dynamically added here -->
 	</div>
 	<textarea id="jsonOutput" class="mt-4 border border-gray-400 p-2 w-full" rows="5" readonly></textarea>
   </div>
