@@ -11,42 +11,27 @@
 		<script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
 
 		<style>
-			.section {
+			#app {
+				max-width: 600px;
+				margin: 0 auto;
+			  }
+			  
+			  #seatingPlan {
+				position: relative;
+				border: 1px solid #ccc;
+			  }
+			  
+			  .section {
 				position: absolute;
 				padding: 8px;
 				border: 1px solid #ccc;
 				background-color: #f7fafc;
+				z-index: 1;
 			  }
 			  
-			  .row {
-				display: flex;
-				align-items: center;
-				margin-bottom: 4px;
-			  }
-			  
-			  .row-label {
-				width: 80px;
-				margin-right: 8px;
-				border: 1px solid #ccc;
-				padding: 4px;
-			  }
-			  
-			  .seat {
-				width: 40px;
-				height: 40px;
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				border: 1px solid #ccc;
-				cursor: pointer;
-			  }
-			  
-			  .aisle {
-				background-color: #fde68a;
-			  }
-			  
-			  .seat-label {
-				font-size: 12px;
+			  .section h3 {
+				margin-top: 0;
+				margin-bottom: 8px;
 			  }
 			  
 			  .btn-delete,
@@ -64,12 +49,39 @@
 				background-color: #999;
 			  }
 			  
-			  #app {
-				max-width: 600px;
-				margin: 0 auto;
+			  .row {
+				display: flex;
+				align-items: center;
+				margin-bottom: 4px;
 			  }
 			  
-			  #jsonOutput {
+			  .row-label {
+				width: 20px;
+				margin-right: 8px;
+				border: 1px solid #ccc;
+				padding: 4px;
+			  }
+			  
+			  .seat {
+				width: 20px;
+				height: 20px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				background-color: #ddd;
+				margin-right: 4px;
+				cursor: pointer;
+			  }
+			  
+			  .aisle {
+				background-color: #f7fafc;
+			  }
+			  
+			  .seat-label {
+				font-size: 8px;
+			  }
+			  
+			  textarea {
 				resize: none;
 			  }
 		</style>
